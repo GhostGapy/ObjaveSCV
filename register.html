@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Page</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="register.css">
+</head>
+<body>
+  <div class="container">
+    <form action="register.php" method="post">
+      <h2>Ustvarite novega uporabnika</h2>
+      <div class="form-group">
+        <label for="username">Ime:</label>
+        <input type="text" id="username" name="username" value="Gasper" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="gmelansek@gmail.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Geslo:</label>
+        <input type="password" id="password" name="password" value="geslo" required>
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">Potrdite geslo:</label>
+        <input type="password" id="confirm-password" name="confirm-password" value="geslo" required>
+      </div>
+      <div class="form-group">
+        <label for="role">Izbira vloge za uporabnika:</label>
+        <select id="role" name="role" required>
+          <option value="0">Admin</option>
+          <option value="1">Lektor</option>
+          <option value="2" selected>Pisatelj</option>
+        </select>
+      </div>
+      <input id="registerbtn" type="submit" name="submit" value="Register">
+    </form>
+  </div>
+</body>
+</html>
+ 
