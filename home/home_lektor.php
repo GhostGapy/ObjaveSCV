@@ -23,7 +23,7 @@ if(!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 1) {
         <ul>
           <li><a href="home_lektor.php">Domača stran</a></li>
           <li><a href="#">Pregled prispevkov</a></li>
-          <li id="logout"><a href="logout.php">Odjava</a></li>
+          <li id="logout"><a href="../login/logout.php">Odjava</a></li>
         </ul>
       </nav>
     </header>

@@ -1,6 +1,6 @@
 <?php
 $DATABASE_HOST = "localhost";
-$DATABASE_NAME = "objavescv";
+$DATABASE_NAME = "objave_scv";
 $DATABASE_USER = "root";
 $DATABASE_PASS = "";
 

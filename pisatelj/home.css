@@ -82,7 +82,7 @@ table {
 table th,
 table td {
   padding: 10px;
-  text-align: left;
+  text-align: center;
   border: 1px solid #333;
 }
 
@@ -98,3 +98,4 @@ table tr:nth-child(even) {
 table tr:hover {
   background-color: #ddd;
 }
+

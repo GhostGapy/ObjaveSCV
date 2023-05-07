@@ -39,7 +39,7 @@
                         exit();
                     } else {
                         // pisatelj
-                        header("Location: ../home/home_pisatelj.php");
+                        header("Location: ../pisatelj/home_pisatelj.php");
                         exit();
                     }
                 } else {

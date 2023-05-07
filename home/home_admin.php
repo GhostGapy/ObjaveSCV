@@ -23,7 +23,7 @@ if(!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 0) {
         <ul>
           <li><a href="home_admin.php">Domača stran</a></li>
           <li><a href="users.php">Uporabniki</a></li>
-          <li><a href="logout.php">Odjava</a></li>
+          <li><a href="../login/logout.php">Odjava</a></li>
         </ul>
       </nav>
     </header>
