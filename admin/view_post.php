@@ -109,6 +109,10 @@ if (isset($_GET['id'])) {
         ?>
       </ul>
     </div>
+    <div class="post-field">
+      <label for="images">Tukaj si naloži slike:</label>
+      <a href="download_image.php?id=<?php echo $row['id']; ?>">Download</a>
+    </div>
   </div>
   <a href="home_admin.php" class="back-btn">Nazaj</a>
   <a href="delete_post.php?id=<?php echo $row['id']; ?>" class="delete-btn">Izbriši</a>
