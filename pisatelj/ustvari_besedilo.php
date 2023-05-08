@@ -32,7 +32,7 @@
           <input type="text" id="title" name="title" required><br><br>
 
           <label for="body">Besedilo:</label>
-          <textarea id="body" name="body" rows="10" cols="50" required></textarea><br><br>
+          <textarea id="body" name="body" rows="20" cols="50" required></textarea><br><br>
 
           <label for="date">Datum:</label>
           <input type="date" id="date" name="date" required><br><br>
@@ -121,6 +121,10 @@
             selectedOptions.forEach(option => {
               if (option.value === "1" || option.value === "2") {
                 showCheckboxes = true;
+
+                document.querySelectorAll('input[name="org[]"]').forEach(checkbox => {
+                  checkbox.checked = false;
+                });
               }
             });
             if (showCheckboxes) {

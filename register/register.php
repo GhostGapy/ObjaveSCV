@@ -2,6 +2,11 @@
 session_start(); 
 require_once '../connection.php'; 
 
+if(!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 0) {
+  header("Location: ../login/login.php");
+  exit();
+}
+
 if(isset($_POST['submit'])) {
     $name = $_POST['username'];
     $email = $_POST['email'];
@@ -27,7 +32,7 @@ if(isset($_POST['submit'])) {
 
         // Preusmeri na stran za prijavo z uspešnim sporočilom
         $_SESSION['success'] = "Uporabnik uspešno registriran. Sedaj se lahko prijavite.";
-        header("Location: ../login/login.php");
+        header("Location: ../admin/home_admin.php");
         exit();
     }
     else {
@@ -48,6 +53,15 @@ if(isset($_POST['submit'])) {
   <link rel="stylesheet" href="register.css">
 </head>
 <body>
+<header>
+  <nav>
+    <ul>
+      <li id="home"><a href="../admin/home_admin.php">Domača stran</a></li>
+      <li id="logout"><a href="../login/logout.php">Odjava</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
   <div class="container">
     <form method="post">
       <h2>Ustvarite novega uporabnika</h2>
@@ -63,7 +77,7 @@ if(isset($_POST['submit'])) {
       ?>
       <div class="form-group">
         <label for="username">Ime:</label>
-        <input type="text" id="username" name="username" value="<?php if(isset($_POST['username'])) echo $_POST['username']; ?>" required>
+        <input type="text" id="username" name="username" value="<?php if(isset($_POST['username'])) echo $_POST['username']; ?>" required> 
       </div>
       <div class="form-group">
         <label for="email">Email:</label>
@@ -80,7 +94,6 @@ if(isset($_POST['submit'])) {
       <div class="form-group">
         <label for="role">Izbira vloge za uporabnika:</label>
         <select id="role" name="role" required>
-          <option value="0">Admin</option>
           <option value="1">Lektor</option>
           <option value="2" selected>Pisatelj</option>
         </select>
@@ -88,5 +101,6 @@ if(isset($_POST['submit'])) {
       <input id="registerbtn" type="submit" name="submit" value="Registriraj">
     </form>
   </div>
+      </main>
 </body>
 </html>
