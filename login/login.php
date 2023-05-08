@@ -31,11 +31,11 @@
                     $_SESSION['user_type'] = $user['user_type'];
                     if($user['user_type'] == 0) {
                         // admin
-                        header("Location: ../home/home_admin.php");
+                        header("Location: ../admin/home_admin.php");
                         exit();
                     } else if ($user['user_type'] == 1) {
                         // lektor
-                        header("Location: ../home/home_lektor.php");
+                        header("Location: ../lektor/home_lektor.php");
                         exit();
                     } else {
                         // pisatelj

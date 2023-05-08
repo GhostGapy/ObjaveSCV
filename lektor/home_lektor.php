@@ -5,13 +5,13 @@ require_once '../connection.php';
 $name=$_SESSION['user_name'];
 $id=$_SESSION['user_id'];
 
-// Preveri, ali je uporabnik prijavljen in ima vlogo pisatelja
-if(!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 2) {
+// Preveri, ali je uporabnik prijavljen in ima vlogo lektorja
+if(!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 1) {
     header("Location: ../login/login.php");
     exit();
 }
 
-// Query the database for all posts
+// Poišče vse objave
 $result = mysqli_query($link, "SELECT id, naslov, datum FROM posts WHERE user_id = $id");
 
 ?>
@@ -19,7 +19,7 @@ $result = mysqli_query($link, "SELECT id, naslov, datum FROM posts WHERE user_id
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Pisateljeva Domača stran</title>
+    <title>Lektor Domača stran</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" type="text/css" href="home.css">
   </head>
@@ -27,14 +27,14 @@ $result = mysqli_query($link, "SELECT id, naslov, datum FROM posts WHERE user_id
     <header>
       <nav>
         <ul>
-          <li><div id="home"><a href="home_pisatelj.php">Domača stran</a></li></div>
+          <li><div id="home"><a href="home_lektor.php">Domača stran</a></div></li>
           <li id="logout"><a href="../login/logout.php">Odjava</a></li>
         </ul>
       </nav>
     </header>
     <main>
-      <h1>Dobrodošli, <?php echo($name) ?>!</h1>
-      <p>Tukaj si lahko ogledate vsa besedila (osnutke), ki še niso bila oddana.</p>
+      <h1>Dobrodošli, Lektor!</h1>
+      <p>To je domača stran lektorja.</p>
       <table>
         <tr><th>Naslov</th><th>Datum</th><th>Uredi</th><th>Izbriši</th></tr>
         <?php while ($row = mysqli_fetch_assoc($result)) { ?>
@@ -45,9 +45,6 @@ $result = mysqli_query($link, "SELECT id, naslov, datum FROM posts WHERE user_id
             <td><a href="delete_post.php?id=<?php echo $row['id']; ?>">IZBRIŠI</a></td>
           </tr>
         <?php } ?>
-        <tr>
-          <td colspan="4" style="text-align: center"><a href="ustvari_besedilo.php">DODAJ</a></td>
-        </tr>
       </table>
     </main>
   </body>

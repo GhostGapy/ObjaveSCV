@@ -25,33 +25,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         {
             $user_id=$_SESSION['user_id'];
         }
-        else if(isset($_POST['oddajte']))
+        else if(isset($_POST['oddajte'])) //Dobiva id za pravega userja
         {
-        if ($lektorirano == 1 && $lektor_email != '') {
-            // Pridobi Id maila
-            $stmt = mysqli_prepare($link, "SELECT id FROM users WHERE email = ? AND user_type = 1");
-            if (!$stmt) {
-                echo "<script>alert('Napaka pri pripravi poizvedbe: " . mysqli_error($link) . "')</script>";
-                $user_id=$_SESSION['user_id'];
-                header("Location: edit_post.php");
-                exit();
+            if ($lektorirano == 1) {
+                $stmt = mysqli_prepare($link, "SELECT id FROM users WHERE email = ? AND user_type = 1");
+                if (!$stmt) {
+                    echo "<script>alert('Napaka pri pripravi poizvedbe: " . mysqli_error($link) . "')</script>";
+                    $user_id=$_SESSION['user_id'];
+                    header("Location: edit_post.php");
+                    exit();
+                }
+                mysqli_stmt_bind_param($stmt, "s", $lektor_email);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+                
+                if (mysqli_num_rows($result) > 0) {
+                    $row = mysqli_fetch_assoc($result);
+                    $user_id = $row['id'];
+                } else {
+                    echo "<script>alert('Uporabnika z tem emailom ni bilo najdenega')</script>";
+                    $user_id=$_SESSION['user_id'];
+                    header("Location: edit_post.php");
+                    exit();
+                }
+            } else if($lektorirano == 0) {
+                $stmt = mysqli_prepare($link, "SELECT id FROM users WHERE user_type = 0");
+                mysqli_stmt_execute($stmt);
+                $result1 = mysqli_stmt_get_result($stmt);
+                if (mysqli_num_rows($result1) > 0) {
+                    $row = mysqli_fetch_assoc($result1);
+                    $user_id = $row['id'];
+                } else {
+                    echo "<script>alert('Admina ni bilo najdenega')</script>";
+                    $user_id=$_SESSION['user_id'];
+                    header("Location: edit_post.php");
+                    exit();
+                }
             }
-            mysqli_stmt_bind_param($stmt, "s", $lektor_email);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-            
-            if (mysqli_num_rows($result) > 0) {
-                $row = mysqli_fetch_assoc($result);
-                $user_id = $row['id'];
-            } else {
-                echo "<script>alert('Uporabnika z tem emailom ni bilo najdenega')</script>";
+            else{
                 $user_id=$_SESSION['user_id'];
-                header("Location: edit_post.php");
-                exit();
             }
-        } else {
-            $user_id=$_SESSION['user_id'];
-        }
     }
 
         // Check if any of the new checkboxes are checked

@@ -4,13 +4,14 @@ require_once '../connection.php';
 
 // Retrieve the list of lektor emails from the database
 $lektor_emails = array();
-$result = mysqli_query($link, "SELECT email FROM users WHERE user_type = 1");
+$result = mysqli_query($link, "SELECT email, user_type FROM users WHERE user_type = 1");
 while ($row = mysqli_fetch_assoc($result)) {
   $lektor_emails[] = $row['email'];
+  $user_type = $row['user_type'];
 }
 
 // Preveri, ali je uporabnik prijavljen in ima vlogo pisatelja
-if(!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 2) {
+if(!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 1) {
     header("Location: ../login/login.php");
     exit();
 }
@@ -22,12 +23,7 @@ if(isset($_POST['osnutek']) || isset($_POST['oddajte'])) {
     $naslov = $_POST['naslov'];
     $besedilo = $_POST['besedilo'];
     $datum = $_POST['datum'];
-    $lektorirano = $_POST['lektorirano'];
-    $lektor_email = '';
 
-    if ($lektorirano == 1) {
-      $lektor_email = $_POST['lektor_email'];
-    }
 
     //preveri ali je osnutek ali ne
     if(isset($_POST['osnutek']))
@@ -36,45 +32,18 @@ if(isset($_POST['osnutek']) || isset($_POST['oddajte'])) {
     }
     else if(isset($_POST['oddajte']))
     {
-      if ($lektorirano == 1) {
-        $stmt = mysqli_prepare($link, "SELECT id FROM users WHERE email = ? AND user_type = 1");
-        if (!$stmt) {
-            echo "<script>alert('Napaka pri pripravi poizvedbe: " . mysqli_error($link) . "')</script>";
-            $user_id=$_SESSION['user_id'];
-            header("Location: edit_post.php");
-            exit();
-        }
-        mysqli_stmt_bind_param($stmt, "s", $lektor_email);
+      $stmt = mysqli_prepare($link, "SELECT id FROM users WHERE user_type = 0");
         mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        
-        if (mysqli_num_rows($result) > 0) {
-            $row = mysqli_fetch_assoc($result);
-            $user_id = $row['id'];
+        $result1 = mysqli_stmt_get_result($stmt);
+        if (mysqli_num_rows($result1) > 0) {
+          $row = mysqli_fetch_assoc($result1);
+          $user_id = $row['id'];
         } else {
-            echo "<script>alert('Uporabnika z tem emailom ni bilo najdenega')</script>";
+            echo "<script>alert('Admina ni bilo najdenega')</script>";
             $user_id=$_SESSION['user_id'];
             header("Location: edit_post.php");
             exit();
         }
-      } else if($lektorirano == 0) {
-          $stmt = mysqli_prepare($link, "SELECT id FROM users WHERE user_type = 0");
-          mysqli_stmt_execute($stmt);
-          $result1 = mysqli_stmt_get_result($stmt);
-          if (mysqli_num_rows($result1) > 0) {
-              $row = mysqli_fetch_assoc($result1);
-              $user_id = $row['id'];
-          } else {
-              echo "<script>alert('Admina ni bilo najdenega')</script>";
-              $user_id=$_SESSION['user_id'];
-              header("Location: edit_post.php");
-              exit();
-          }
-      }
-      else{
-          $user_id=$_SESSION['user_id'];
-      }
-    
     }
 
 
@@ -106,11 +75,11 @@ if(isset($_POST['osnutek']) || isset($_POST['oddajte'])) {
 
 
     // Posodobi prispevek v bazi podatkov
-    $query = "UPDATE posts SET naslov='$naslov', besedilo='$besedilo', datum='$datum', lektorirano='$lektorirano', user_id='$user_id', lektor_email='$lektor_email' WHERE id='$id'";
+    $query = "UPDATE posts SET naslov='$naslov', besedilo='$besedilo', datum='$datum', lektorirano=0, user_id='$user_id', lektor_email='' WHERE id='$id'";
     mysqli_query($link, $query);
 
   // Preusmeri uporabnika na domačo stran pisatelja
-  header("Location: home_pisatelj.php");
+  header("Location: home_lektor.php");
   exit();
 }
 
@@ -142,25 +111,24 @@ if(isset($_GET['id'])) {
 }
 
 ?>
-
 <!DOCTYPE>
 <html>
   <head>
-    <title>Uredi prispevek</title>
+    <title>Lektoriranje</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="ustvari_besedilo.css">
+    <link rel="stylesheet" type="text/css" href="../pisatelj/ustvari_besedilo.css">
   </head>
   <body>
     <header>
       <nav>
         <ul>
-          <li><a href="home_pisatelj.php">Domača stran</a></li>
+          <li><div id="home"><a href="home_lektor.php">Domača stran</a></li></div>
           <li id="logout"><a href="../login/logout.php">Odjava</a></li>
         </ul>
       </nav>
     </header>
     <main>
-      <h1>Uredi prispevek</h1>
+      <h1>Lektorirajte besedilo</h1>
       <form method="post" action="edit_post.php">
         <input type="hidden" name="id" value="<?php echo $id; ?>">
         <label for="naslov">Naslov:</label>
@@ -169,21 +137,7 @@ if(isset($_GET['id'])) {
         <textarea name="besedilo" rows="20" cols="50" required><?php echo $row['besedilo']; ?></textarea>
         <label for="datum">Datum:</label>
         <input type="date" name="datum" value="<?php echo $row['datum']; ?>">
-        <div class="radio-group">
-          <label>Ali je besedilo lektorirano?</label>
-          <input type="radio" id="yes" name="lektorirano" value="0" <?php if($row['lektorirano'] == 0) { echo "checked"; } ?>>
-          Da
-          <input type="radio" id="no" name="lektorirano" value="1" <?php if($row['lektorirano'] == 1) { echo "checked"; } ?>>
-          Ne
-        </div>
-        <div id="emailField" <?php if($row['lektorirano'] == 0) { echo "style='display:none;'"; } ?>>
-          <label for="lektor_email">Lektorji:</label>
-          <select name="lektor_email">
-            <?php foreach ($lektor_emails as $email) { ?>
-              <option value="<?php echo $email; ?>" <?php if($row['lektor_email'] == $email) { echo "selected"; } ?>><?php echo $email; ?></option>
-            <?php } ?>
-          </select>
-        </div>
+        
 
         <label>Platforma:</label>
           <div>
@@ -224,49 +178,17 @@ if(isset($_GET['id'])) {
             <br><br>
           </div>    
 
-        <input type="submit" name="oddajte" value="Oddajte">
-        <input type="submit" name="osnutek" value="Shrani osnutek">
+        <input type="submit" name="oddajte" value="Oddajte Adminu">
+        <input type="submit" name="osnutek" value="Shranite">
       </form>
       <script>
-        function showEmail() {
-          document.getElementById("emailField").style.display = "block";
-          document.getElementById("lektor_email").required = true;
-        }
-
-        function hideEmail() {
-          document.getElementById("emailField").style.display = "none";
-          document.getElementById("lektor_email").required = false;
-          document.getElementById("lektor_email").value = "";
-        }
-
-        function updateEmailField() {
-          // Prikaži ali skrij polje za email glede na izbrano možnost
-          var lektorirano = document.querySelector('input[name="lektorirano"]:checked').value;
-          if(lektorirano == 1) {
-            showEmail();
-          } else {
-            hideEmail();
-          }
-        }
-
-        // Posodobi prikaz polja za email ob spremembi izbire
-        var radioButtons = document.querySelectorAll('input[name="lektorirano"]');
-        for(var i = 0; i < radioButtons.length; i++) {
-          radioButtons[i].addEventListener("change", updateEmailField);
-        }
-
-        // Posodobi prikaz polja za email ob nalaganju strani
-        window.addEventListener("load", updateEmailField);
-
-
-
         function showCheckboxes() {
             const selectedOptions = document.querySelectorAll('input[name="platform[]"]:checked');
             let showCheckboxes = false;
             selectedOptions.forEach(option => {
               if (option.value === "1" || option.value === "2") {
                 showCheckboxes = true;
-
+                
                 document.querySelectorAll('input[name="org[]"]').forEach(checkbox => {
                   checkbox.checked = false;
                 });
