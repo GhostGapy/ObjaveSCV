@@ -2,6 +2,10 @@
 session_start(); 
 require_once '../connection.php'; 
 
+$lektor_emailll = '';
+$pisatelj_emailll = '';
+$admin_emailll = '';
+
 // Retrieve the list of lektor emails from the database
 $lektor_emails = array();
 $result = mysqli_query($link, "SELECT email FROM users WHERE user_type = 1");
@@ -50,7 +54,31 @@ if(isset($_POST['osnutek']) || isset($_POST['oddajte'])) {
         
         if (mysqli_num_rows($result) > 0) {
             $row = mysqli_fetch_assoc($result);
+
+            // With this code to get the recipient email address from the user ID:
+            $stmt = mysqli_prepare($link, "SELECT email FROM users WHERE id = ?");
+            mysqli_stmt_bind_param($stmt, "i", $user_id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            if (mysqli_num_rows($result) > 0) {
+                $row1 = mysqli_fetch_assoc($result);
+                $pisatelj_emailll = $row1['email'];
+            }
+
+
             $user_id = $row['id'];
+
+            // With this code to get the recipient email address from the user ID:
+            $stmt = mysqli_prepare($link, "SELECT email FROM users WHERE id = ?");
+            mysqli_stmt_bind_param($stmt, "i", $user_id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            if (mysqli_num_rows($result) > 0) {
+                $row = mysqli_fetch_assoc($result);
+                $lektor_emailll = $row['email'];
+            }
         } else {
             echo "<script>alert('Uporabnika z tem emailom ni bilo najdenega')</script>";
             $user_id=$_SESSION['user_id'];
@@ -64,6 +92,17 @@ if(isset($_POST['osnutek']) || isset($_POST['oddajte'])) {
           if (mysqli_num_rows($result1) > 0) {
               $row = mysqli_fetch_assoc($result1);
               $user_id = $row['id'];
+
+              // With this code to get the recipient email address from the user ID:
+              $stmt = mysqli_prepare($link, "SELECT email FROM users WHERE id = ?");
+              mysqli_stmt_bind_param($stmt, "i", $user_id);
+              mysqli_stmt_execute($stmt);
+              $result = mysqli_stmt_get_result($stmt);
+
+              if (mysqli_num_rows($result) > 0) {
+                  $row1 = mysqli_fetch_assoc($result);
+                  $admin_emailll = $row1['email'];
+              }
           } else {
               echo "<script>alert('Admina ni bilo najdenega')</script>";
               $user_id=$_SESSION['user_id'];
@@ -108,6 +147,40 @@ if(isset($_POST['osnutek']) || isset($_POST['oddajte'])) {
     // Posodobi prispevek v bazi podatkov
     $query = "UPDATE posts SET naslov='$naslov', besedilo='$besedilo', datum='$datum', lektorirano='$lektorirano', user_id='$user_id', lektor_email='$lektor_email' WHERE id='$id'";
     mysqli_query($link, $query);
+
+    if ($lektor_emailll != '') {
+        $subject = 'Nova objava pripravljena na urejanje';
+        $message = "Pozdravljeni,\n\n" .
+          "Prejeli ste nov zapis, ki ga je potrebno lektorirati.\n" .
+          "Za več informacij se prijavite v vaš račun in preglejte zapis.\n\n" .
+          "Lep pozdrav,\n" .
+          "Ekipa ObjaveSCV";
+        $headers = 'From: _@gmail.com' . "\r\n" .
+          'Reply-To: _@gmail.com' . "\r\n" .
+          'X-Mailer: PHP/' . phpversion();
+
+        mail($lektor_emailll, $subject, $message, $headers);
+    }
+
+    if ($pisatelj_emailll  != '') {
+        $subject = 'Nova objava je bila poslana';
+        $message = "Spoštovani,\n\nHvala vam za oddajo vašega prispevka. Vaša objava je bila uspešno sprejeta in bo pregledana s strani našega uredništva. V kolikor bo vaš prispevek primeren za objavo, boste obveščeni o datumu objave.\n\nLep pozdrav,\nEkipa ObjaveSCV";
+        $headers = 'From: _@gmail.com' . "\r\n" .
+            'Reply-To: _@gmail.com' . "\r\n" .
+            'X-Mailer: PHP/' . phpversion();
+
+        mail($pisatelj_emailll, $subject, $message);
+    }
+
+    if ($admin_emailll  != '') {
+        $subject = 'Nova objava pripravljena za ogled';
+        $message = "Spoštovani administrator,\n\nNekdo je oddal nov prispevek na spletno stran. Prosimo, da preverite prispevek in ga potrdite, če ustreza standardom.\n\nLep pozdrav,\nEkipa spletne strani";
+        $headers = 'From: _@gmail.com' . "\r\n" .
+            'Reply-To: _@gmail.com' . "\r\n" .
+            'X-Mailer: PHP/' . phpversion();
+
+        mail($admin_emailll, $subject, $message);
+    }
 
   // Preusmeri uporabnika na domačo stran pisatelja
   header("Location: home_pisatelj.php");

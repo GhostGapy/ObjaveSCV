@@ -35,6 +35,13 @@ if (isset($_GET['id'])) {
   while ($rowOrganization = mysqli_fetch_assoc($resultOrganizations)) {
     $selectedOrganizations[] = $rowOrganization['sola_id'];
   }
+
+  // Count the number of images associated with the post
+  $image_count_result = mysqli_query($link, "SELECT COUNT(*) FROM photos WHERE post_id = '$id'");
+  $image_count_row = mysqli_fetch_array($image_count_result);
+  $image_count = $image_count_row[0];
+
+
 } else {
   // Če ID objave ni poslan, uporabnika preusmerimo na domačo stran administratorja
   header("Location: home_admin.php");
@@ -109,10 +116,14 @@ if (isset($_GET['id'])) {
         ?>
       </ul>
     </div>
-    <div class="post-field">
-      <label for="images">Tukaj si naloži slike:</label>
-      <a href="download_image.php?id=<?php echo $row['id']; ?>">Download</a>
-    </div>
+    <?php if ($image_count > 0): ?>
+      <div class="post-field">
+        <div id="images_download">
+          <label for="images">Tukaj si naloži slike:</label>
+          <a href="download_image.php?id=<?php echo $row['id']; ?>" class="download-btn">Download</a>
+        </div>
+      </div>
+    <?php endif; ?>
   </div>
   <a href="home_admin.php" class="back-btn">Nazaj</a>
   <a href="delete_post.php?id=<?php echo $row['id']; ?>" class="delete-btn">Izbriši</a>

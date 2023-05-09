@@ -44,6 +44,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             <th>ID</th>
             <th>Ime</th>
             <th>Email</th>
+            <th>Šola uporabnika</th>
             <th>Tip uporabnika</th>
             <th>Akcije</th>
           </tr>
@@ -54,6 +55,25 @@ while ($row = mysqli_fetch_assoc($result)) {
               <td><?php echo $user['id']; ?></td>
               <td><?php echo $user['name']; ?></td>
               <td><?php echo $user['email']; ?></td>
+              <td>
+                <?php if ($user['sola_id'] == 1) { ?>
+                  ŠCV
+                <?php } elseif ($user['sola_id'] == 2) { ?>
+                  ŠSGO
+                <?php } elseif ($user['sola_id'] == 3) { ?>
+                  ERŠ
+                <?php } elseif ($user['sola_id'] == 4) { ?>
+                  ŠSD
+                <?php } elseif ($user['sola_id'] == 5) { ?>
+                  GIM
+                <?php } elseif ($user['sola_id'] == 6) { ?>
+                  MIC
+                <?php } elseif ($user['sola_id'] == 7) { ?>
+                  VSŠ
+                <?php } else { ?>
+                  ---
+                <?php } ?>
+              </td>
               <td>
                 <?php if ($user['user_type'] == 0) { ?>
                   Admin

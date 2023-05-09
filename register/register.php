@@ -13,6 +13,7 @@ if(isset($_POST['submit'])) {
     $pass1 = $_POST['password'];
     $pass2 = $_POST['confirm-password'];
     $role = $_POST['role'];
+    $sola = $_POST['sola'];
 
     // Preveri vnos podatkov
     if(empty($name) || empty($email) || empty($pass1) || empty($pass2) || ($pass1 != $pass2)) {
@@ -27,7 +28,7 @@ if(isset($_POST['submit'])) {
         $hashed_password = password_hash($pass1, PASSWORD_DEFAULT);
 
         // Vstavi uporabnika v bazo
-        $sql = "INSERT INTO users (name, email, password, user_type) VALUES ('$name', '$email', '$hashed_password', '$role')"; 
+        $sql = "INSERT INTO users (name, email, password, user_type, sola_id) VALUES ('$name', '$email', '$hashed_password', '$role', '$sola')"; 
         mysqli_query($link, $sql);
 
         // Preusmeri na stran za prijavo z uspešnim sporočilom
@@ -96,6 +97,18 @@ if(isset($_POST['submit'])) {
         <select id="role" name="role" required>
           <option value="1">Lektor</option>
           <option value="2" selected>Pisatelj</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="sola">Izbira šole za uporabnika:</label>
+        <select id="sola" name="sola" required>
+          <option value="1" selected>ŠCV</option>
+          <option value="2">ŠSGO</option>
+          <option value="3">ERŠ</option>
+          <option value="4">ŠSD</option>
+          <option value="5">GIM</option>
+          <option value="6">MIC</option>
+          <option value="7">VSŠ</option>
         </select>
       </div>
       <input id="registerbtn" type="submit" name="submit" value="Registriraj">
