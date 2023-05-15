@@ -87,6 +87,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <?php if ($user['user_type'] == 1 || $user['user_type'] == 2 ) { ?>
                   <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="edit-btn">Uredi</a>
                   <a href="delete_user.php?id=<?php echo $user['id']; ?>" class="delete-btn">Izbriši</a>
+                  <a href="reset_pass.php?id=<?php echo $user['id']; ?>" class="reset-btn">Reset password</a>
                 <?php } ?>
               </td>
             </tr>

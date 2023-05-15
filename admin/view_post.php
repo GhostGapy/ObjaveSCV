@@ -120,7 +120,7 @@ if (isset($_GET['id'])) {
       <div class="post-field">
         <div id="images_download">
           <label for="images">Tukaj si naloži slike:</label>
-          <a href="download_image.php?id=<?php echo $row['id']; ?>" class="download-btn">Download</a>
+          <a href="download_image.php?id=<?php echo $row['id']; ?>" class="download-btn">Naloži .zip</a>
         </div>
       </div>
     <?php endif; ?>

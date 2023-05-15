@@ -58,7 +58,7 @@
           </div><br>
 
           <label for="images">Naložite slike:</label>
-          <input type="file" id="images" name="images[]" multiple><br><br>
+          <input type="file" id="images" name="images[]" accept="image/*" multiple><br><br>
 
           <label>Platforma:</label>
           <div>

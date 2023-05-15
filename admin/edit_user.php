@@ -21,9 +21,10 @@ if (isset($_GET['id'])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $user_type = $_POST['user_type'];
+    $sola = $_POST['sola'];
 
     // Update the user details in the database
-    mysqli_query($link, "UPDATE users SET name='$name', email='$email', user_type='$user_type' WHERE id='$id'");
+    mysqli_query($link, "UPDATE users SET name='$name', email='$email', user_type='$user_type', sola_id='$sola' WHERE id='$id'");
 
     // Redirect the user to the users page
     header("Location: users.php");
@@ -74,10 +75,22 @@ if (isset($_GET['id'])) {
           <option value="2" <?php echo $user['user_type'] == 2 ? 'selected' : ''; ?>>Pisatelj</option>
         </select>
       </div>
+      <div class="form-group">
+        <label for="sola">Izbira šole za uporabnika:</label>
+        <select id="sola" name="sola" required>
+          <option value="1" <?php echo $user['sola_id'] == 1 ? 'selected' : ''; ?>>ŠCV</option>
+          <option value="2" <?php echo $user['sola_id'] == 2 ? 'selected' : ''; ?>>ŠSGO</option>
+          <option value="3" <?php echo $user['sola_id'] == 3 ? 'selected' : ''; ?>>ERŠ</option>
+          <option value="4" <?php echo $user['sola_id'] == 4 ? 'selected' : ''; ?>>ŠSD</option>
+          <option value="5" <?php echo $user['sola_id'] == 5 ? 'selected' : ''; ?>>GIM</option>
+          <option value="6" <?php echo $user['sola_id'] == 6 ? 'selected' : ''; ?>>MIC</option>
+          <option value="7" <?php echo $user['sola_id'] == 7 ? 'selected' : ''; ?>>VSŠ</option>
+        </select>
+      </div>
       <button type="submit" class="save-btn">Shrani</button>
-        <a href="users.php" class="back-btn">Nazaj</a>
-      </form>
-    </div>
+      <a href="users.php" class="back-btn">Nazaj</a>
+    </form>
+  </div>
   </main>
 </body>
 </html>
